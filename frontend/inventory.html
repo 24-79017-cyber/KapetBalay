@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kape't Balay | Inventory</title>
+    <link rel="stylesheet" href="css/inventory.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Kape't Balay</h2>
+                <p>Management System</p>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="inventory.html" class="active">Inventory</a>
+                <a href="pos.html">Cashier / POS</a>
+                <a href="kitchen.html">Kitchen</a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="login.html" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- HEADER -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Inventory Management</h1>
+                    <p>Manage and monitor your coffee shop supplies</p>
+                </div>
+
+                <div class="admin-profile">
+                    <div class="admin-info">
+                        <h4>Where every sip</h4>
+                        <p>feels like home.</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- INVENTORY STATUS SUMMARY -->
+            <section class="dashboard-cards inventory-summary">
+
+                <div class="dashboard-card">
+                    <p class="card-label">Out of Stock</p>
+                    <h2 class="card-value" id="outOfStock">0</h2>
+                    <p class="card-description">Items with zero quantity</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <p class="card-label">Low Stock</p>
+                    <h2 class="card-value" id="lowStock">0</h2>
+                    <p class="card-description">Items needing restock</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <p class="card-label">Normal</p>
+                    <h2 class="card-value" id="normalStock">0</h2>
+                    <p class="card-description">Items with sufficient stock</p>
+                </div>
+
+            </section>
+
+            <!-- INVENTORY ITEMS -->
+            <section class="dashboard-section inventory-section">
+
+                <!-- INVENTORY HEADER -->
+                <div class="inventory-section-header">
+
+                    <div class="inventory-heading">
+                        <h2>Inventory Items</h2>
+                        <p>View and manage your available supplies</p>
+                    </div>
+
+                    <div class="inventory-actions">
+                        <button type="button" class="btn btn-secondary" id="stockInButton">
+                            Stock-In
+                        </button>
+
+                        <button type="button" class="btn btn-secondary" id="stockUsageButton">
+                            Stock Usage
+                        </button>
+
+                        <button type="button" class="btn btn-primary" id="addItemButton">
+                            + Add Item
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- SEARCH -->
+                <div class="inventory-toolbar">
+                    <input
+                        type="text"
+                        id="searchInventory"
+                        placeholder="Search inventory item..."
+                    >
+                </div>
+
+                <!-- OUT OF STOCK GROUP -->
+                <section class="inventory-status-section out-stock-section">
+                    <div class="inventory-status-header">
+                        <div>
+                            <h3>Out of Stock</h3>
+                            <p>Items that need immediate replenishment</p>
+                        </div>
+
+                        <span class="inventory-group-count" id="outOfStockCount">
+                            0 Items
+                        </span>
+                    </div>
+
+                    <div class="inventory-items-grid" id="outOfStockItems">
+                        <div class="empty-state">No out-of-stock items.</div>
+                    </div>
+                </section>
+
+                <!-- LOW STOCK GROUP -->
+                <section class="inventory-status-section low-stock-section">
+                    <div class="inventory-status-header">
+                        <div>
+                            <h3>Low Stock</h3>
+                            <p>Items that are running low</p>
+                        </div>
+
+                        <span class="inventory-group-count" id="lowStockCount">
+                            0 Items
+                        </span>
+                    </div>
+
+                    <div class="inventory-items-grid" id="lowStockItems">
+                        <div class="empty-state">No low-stock items.</div>
+                    </div>
+                </section>
+
+                <!-- NORMAL STOCK GROUP -->
+                <section class="inventory-status-section normal-stock-section">
+                    <div class="inventory-status-header">
+                        <div>
+                            <h3>Normal Stock</h3>
+                            <p>Items with sufficient quantity</p>
+                        </div>
+
+                        <span class="inventory-group-count" id="normalStockCount">
+                            0 Items
+                        </span>
+                    </div>
+
+                    <div class="inventory-items-grid" id="normalStockItems">
+                        <div class="empty-state">No normal-stock items.</div>
+                    </div>
+                </section>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ADD / EDIT INVENTORY MODAL -->
+    <div class="inventory-modal" id="inventoryModal">
+        <div class="inventory-modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <h2>Add Inventory Item</h2>
+                    <p>Enter the details of your inventory item.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeInventoryModal"
+                    aria-label="Close modal"
+                >&times;</button>
+            </div>
+
+            <form id="inventoryForm" novalidate>
+
+                <div class="form-group">
+                    <label for="itemName">Item Name</label>
+                    <input
+                        type="text"
+                        id="itemName"
+                        placeholder="Enter item name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="itemCategory">Category</label>
+                    <select id="itemCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Utensils">Utensils</option>
+                        <option value="Beverage">Beverage</option>
+                        <option value="Containers">Containers</option>
+                        <option value="Amenities">Amenities</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="itemQuantity">Quantity</label>
+                        <input
+                            type="number"
+                            id="itemQuantity"
+                            min="0"
+                            step="any"
+                            placeholder="0"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemUnit">Unit</label>
+                        <input
+                            type="text"
+                            id="itemUnit"
+                            placeholder="e.g. pcs, kg"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemMinimumStock">Minimum Stock</label>
+                    <input
+                        type="number"
+                        id="itemMinimumStock"
+                        min="0"
+                        step="any"
+                        placeholder="0"
+                        required
+                    >
+                </div>
+
+                <div class="modal-buttons">
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        id="cancelInventory"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn-save">
+                        Save Item
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- STOCK-IN MODAL -->
+    <div class="inventory-modal" id="stockInModal">
+        <div class="inventory-modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <h2>Stock-In</h2>
+                    <p>Record newly received inventory supplies.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeStockInModal"
+                    aria-label="Close modal"
+                >&times;</button>
+            </div>
+
+            <form id="stockInForm" novalidate>
+
+                <div class="form-group">
+                    <label for="stockInItem">Select Inventory Item</label>
+                    <select id="stockInItem" required>
+                        <option value="">Choose an item</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Stock</label>
+                    <input
+                        type="text"
+                        id="stockInCurrentStock"
+                        readonly
+                        placeholder="Select an item first"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="stockInQuantity">Quantity Received</label>
+                    <input
+                        type="number"
+                        id="stockInQuantity"
+                        min="0.01"
+                        step="any"
+                        placeholder="Enter received quantity"
+                        required
+                    >
+                </div>
+
+                <div class="modal-buttons">
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        id="cancelStockIn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn-save">
+                        Confirm Stock-In
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- STOCK USAGE MODAL -->
+    <div class="inventory-modal" id="stockUsageModal">
+        <div class="inventory-modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <h2>Stock Usage</h2>
+                    <p>Record inventory items used.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeStockUsageModal"
+                    aria-label="Close modal"
+                >&times;</button>
+            </div>
+
+            <form id="stockUsageForm" novalidate>
+
+                <div class="form-group">
+                    <label for="usageItem">Select Item</label>
+                    <select id="usageItem" required>
+                        <option value="">Choose inventory item</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="usageCurrentStock">Current Stock</label>
+                    <input
+                        type="number"
+                        id="usageCurrentStock"
+                        readonly
+                        placeholder="Current stock will appear here"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="usageQuantity">Quantity Used</label>
+                    <input
+                        type="number"
+                        id="usageQuantity"
+                        min="0.01"
+                        step="any"
+                        placeholder="Enter quantity used"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="usageReason">Reason / Notes</label>
+                    <input
+                        type="text"
+                        id="usageReason"
+                        placeholder="e.g. Daily coffee preparation"
+                    >
+                </div>
+
+                <div class="modal-buttons">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="cancelStockUsage"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Confirm Usage
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="js/inventory.js"></script>
+
+</body>
+</html>
